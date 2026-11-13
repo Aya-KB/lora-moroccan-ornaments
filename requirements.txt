@@ -1,0 +1,14 @@
+# PyTorch est déjà présent sur Colab/Kaggle. En local : installez-le d'abord (https://pytorch.org).
+diffusers>=0.31.0
+transformers>=4.44.0
+accelerate>=0.33.0
+peft>=0.12.0
+safetensors
+gradio>=4.40.0
+pyyaml
+pandas
+matplotlib
+requests
+pillow
+numpy
+pytest

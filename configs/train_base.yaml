@@ -1,0 +1,19 @@
+# Configuration d'entraînement par défaut (Stable Diffusion 1.5, UNet LoRA, < 12 Go de VRAM).
+pretrained_model: "stable-diffusion-v1-5/stable-diffusion-v1-5"
+resolution: 512
+rank: 16                 # rang LoRA r
+alpha: null              # null => alpha = rang (échelle effective alpha/r = 1)
+steps: 800               # nombre de pas d'optimisation
+batch_size: 2
+grad_accum: 1
+lr: 1.0e-4
+lr_scheduler: constant_with_warmup
+warmup_steps: 50
+weight_decay: 1.0e-2
+max_grad_norm: 1.0
+hflip: true              # augmentation : retournement horizontal (latents mis en cache)
+grad_checkpointing: true # économise la VRAM
+save_every: 200          # checkpoints intermédiaires -> compare plusieurs nombres d'étapes
+seed: 42
+output_root: "outputs"
+run_name: null           # null => r{rank}_s{steps}

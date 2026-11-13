@@ -1,0 +1,17 @@
+# Prompts d'évaluation. Le préfixe de légende est ajouté automatiquement aux groupes
+# `in_domain` et `novel` (jamais à `out_of_domain`).
+in_domain:        # proches du domaine d'entraînement
+  - "a wall covered with colorful geometric star patterns"
+  - "a close-up of a blue and white mosaic fountain basin"
+  - "an eight-pointed star pattern in green, blue and brown tiles"
+  - "a doorway framed by intricate glazed tile patterns"
+novel:            # compositions jamais vues : mesure la généralisation
+  - "a courtyard with a central fountain and tiled walls"
+  - "a table top decorated with a floral mosaic design"
+  - "a staircase whose risers are decorated with patterned tiles"
+  - "a coffee cup on a tiled surface"
+out_of_domain:    # hors domaine : mesure l'oubli (la LoRA ne doit pas tout "zelligiser")
+  - "a red bicycle leaning against a white wall"
+  - "a golden retriever sitting on grass"
+  - "a bowl of fruit on a wooden table"
+  - "a snowy mountain landscape at sunrise"

@@ -1,0 +1,18 @@
+# Paramètres de constitution du jeu de données (domaine unique : zellige marocain).
+caption_prefix: "a photo of moroccan zellige tilework, "   # préfixe commun de toutes les légendes
+image_size: 512          # taille finale (carré)
+min_side: 384            # on rejette les images dont le petit côté est inférieur
+n_test: 6                # images réservées à la généralisation (5 à 10 demandées)
+seed: 42                 # reproductibilité du split train/test
+dedup_hamming: 6         # distance de Hamming (dHash 64 bits) <= seuil => doublon / quasi-doublon
+max_images: 45           # arrêt de la recherche quand ce nombre de lignes est atteint
+request_pause_s: 1.0     # politesse envers les serveurs Wikimedia
+# Mots à éviter dans les titres (logos, cartes, scans de livres...) : hors du domaine visé.
+exclude_title_words: [logo, map, flag, coat of arms, stamp, poster, book, manuscript, portrait, flyer, banner]
+# Sources Wikimedia Commons. Vérifiez les noms de catégories sur commons.wikimedia.org
+# (un nom inexistant renvoie simplement 0 fichier) et ajoutez/retirez des sources.
+sources:
+  - {type: category, name: "Category:Zellige"}
+  - {type: category, name: "Category:Zellij"}
+  - {type: search,   name: "zellige tilework Morocco"}
+  - {type: search,   name: "zellij mosaic Morocco"}

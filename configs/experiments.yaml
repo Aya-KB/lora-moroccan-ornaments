@@ -1,0 +1,8 @@
+# Plan d'expériences : 3 rangs x 800 pas, avec checkpoints à 200/400/600/800.
+# Un seul entraînement par rang suffit pour comparer aussi plusieurs nombres d'étapes.
+# Ajoutez un run plus long (ex. steps: 2000) pour provoquer volontairement le surapprentissage.
+runs:
+  - {run_name: r04_s800, rank: 4,  steps: 800}
+  - {run_name: r16_s800, rank: 16, steps: 800}
+  - {run_name: r64_s800, rank: 64, steps: 800}
+  - {run_name: r16_s2000, rank: 16, steps: 2000, save_every: 500}   # surapprentissage
