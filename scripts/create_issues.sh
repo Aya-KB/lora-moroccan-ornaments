@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Crée les issues de départ avec la CLI GitHub (gh auth login au préalable).
 set -euo pipefail
 mk() { gh issue create --title "$1" --body "$2" --label "$3"; }

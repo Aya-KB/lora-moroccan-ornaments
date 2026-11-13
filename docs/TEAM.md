@@ -1,4 +1,4 @@
-﻿# Équipe et contributions
+# Équipe et contributions
 
 | Membre | Rôle principal | Issues / commits visibles |
 |---|---|---|

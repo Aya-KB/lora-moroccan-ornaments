@@ -1,4 +1,4 @@
-﻿# Adapter un modèle texte-image avec LoRA — zellige marocain
+# Adapter un modèle texte-image avec LoRA — zellige marocain
 
 Spécialisation de **Stable Diffusion 1.5** sur un domaine précis (le *zellige* marocain) avec une **LoRA**
 (petite adaptation des couches d'attention de l'UNet), à partir de **20 à 50 images autorisées**, sur un GPU de **12 Go de VRAM maximum**

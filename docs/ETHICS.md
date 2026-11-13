@@ -1,4 +1,4 @@
-﻿# Réflexion éthique
+# Réflexion éthique
 
 1. **Droits des images.** Seules des images sous licence libre compatible (CC0, domaine public, CC BY, CC BY-SA) ou des photos de l'équipe sont utilisées ; chaque image est tracée dans `data/metadata.csv`. L'attribution est conservée. L'effet juridique d'un entraînement sur des images CC BY-SA (le modèle est-il une œuvre dérivée ?) reste débattu : nous mentionnons la source des données avec les poids et nous ne prétendons pas fournir un avis juridique.
 2. **Artistes.** Aucun nom d'artiste vivant dans les légendes ou prompts ; un seul style et un seul concept pour éviter l'imitation ciblée.

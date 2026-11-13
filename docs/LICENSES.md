@@ -1,4 +1,4 @@
-﻿# Licences
+# Licences
 
 | Élément | Licence |
 |---|---|

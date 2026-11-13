@@ -1,4 +1,4 @@
-﻿# Fiche des données
+# Fiche des données
 
 | Champ | Valeur |
 |---|---|

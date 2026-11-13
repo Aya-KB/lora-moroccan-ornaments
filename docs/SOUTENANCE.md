@@ -1,4 +1,4 @@
-﻿# Soutenance — 10 minutes (≈ 9 diapositives)
+# Soutenance — 10 minutes (≈ 9 diapositives)
 
 | Min | Diapo | Contenu |
 |---|---|---|

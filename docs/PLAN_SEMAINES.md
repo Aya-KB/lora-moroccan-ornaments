@@ -1,4 +1,4 @@
-﻿# Plan de travail hebdomadaire (adaptable à 6–8 semaines)
+# Plan de travail hebdomadaire (adaptable à 6–8 semaines)
 
 Chaque semaine : au moins un commit par membre, issues mises à jour, README à jour.
 

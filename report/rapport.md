@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Adapter un modèle texte-image avec LoRA : le cas du zellige marocain"
 author: "Noms des membres de l'équipe"
 date: "2026"

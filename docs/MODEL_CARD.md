@@ -1,4 +1,4 @@
-﻿# Fiche du modèle — LoRA zellige marocain
+# Fiche du modèle — LoRA zellige marocain
 
 - **Modèle de base** : Stable Diffusion 1.5 (`stable-diffusion-v1-5/stable-diffusion-v1-5`), licence CreativeML OpenRAIL-M.
 - **Adaptation** : LoRA sur `to_q, to_k, to_v, to_out.0` de l'UNet ; rang(s) 4 / 16 / 64, `alpha = rang`.
