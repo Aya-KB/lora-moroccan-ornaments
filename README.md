@@ -1,63 +1,63 @@
-# Adapter un modèle texte-image avec LoRA — zellige marocain
+# Adapter un modèle texte-image avec LoRA : zellige marocain
 
-Spécialisation de **Stable Diffusion 1.5** sur un domaine précis (le *zellige* marocain) avec une **LoRA**
-(petite adaptation des couches d'attention de l'UNet), à partir de **20 à 50 images autorisées**, sur un GPU de **12 Go de VRAM maximum**
-(Google Colab T4 / Kaggle).
+## Présentation
 
-> Équipe : voir [`docs/TEAM.md`](docs/TEAM.md) · Rapport : [`report/rapport.md`](report/rapport.md) · Plan de soutenance : [`docs/SOUTENANCE.md`](docs/SOUTENANCE.md)
+Ce projet spécialise **Stable Diffusion 1.5** sur un domaine précis, le *zellige* marocain, avec une **LoRA** : une petite adaptation ajoutée aux couches d'attention du UNet, sans réentraîner tout le modèle.
+
+- **Données** : 20 à 50 images sous licence libre (Wikimedia Commons, photos de l'équipe), légendées à la main, recadrées en 512×512, avec 5 à 10 images réservées au test.
+- **Expériences** : comparaison de plusieurs rangs LoRA (4, 16, 64) et nombres d'étapes (200 à 800, plus un run long pour provoquer le surapprentissage).
+- **Évaluation** : respect du texte (CLIP-T), adoption du style, taux de copie des images d'entraînement, oubli hors domaine, coût (temps, VRAM, paramètres), exemples visuels.
+- **Démonstration** : application Gradio avec prompt libre, réglage de l'intensité de la LoRA et comparaison avant/après.
+- **Contrainte** : GPU de **12 Go de VRAM maximum** (Google Colab ou Kaggle, T4).
+
+## Installation
+
+### Sur Google Colab ou Kaggle (recommandé)
+1. Ouvrir `notebooks/00_donnees.ipynb` dans Colab (*Fichier > Ouvrir le notebook > GitHub*, puis l'URL de ce dépôt), ou l'importer dans Kaggle (activer *Internet*).
+2. Activer un GPU : *Exécution > Modifier le type d'exécution > GPU T4*.
+3. La première cellule de chaque notebook clone le dépôt et installe les dépendances automatiquement.
+
+### En local
+Python 3.10 ou plus, et un GPU NVIDIA pour l'entraînement (PyTorch à installer d'abord : https://pytorch.org).
+```bash
+git clone https://github.com/Aya-KB/lora-moroccan-ornaments.git
+cd lora-moroccan-ornaments
+python -m venv .venv
+source .venv/bin/activate          # Windows : .venv\Scripts\activate
+pip install -r requirements.txt
+python -m pytest -q tests          # test de la chaîne de données (sans GPU)
+```
+
+## Commande de lancement
+
+Depuis la racine du dépôt :
+```bash
+python -m src.data_utils download        # 1. télécharge des images sous licence libre
+python scripts/review_captions.py        # 2. relecture des légendes (reviewed=1) et exclusions
+python -m src.data_utils prepare         # 3. 512x512, doublons, séparation train/test
+python -m src.data_utils check           # 4. contrôle des licences, légendes et effectifs
+
+python -m src.train_lora --config configs/train_base.yaml --rank 16 --steps 800   # un entraînement
+python -m src.run_experiments --experiments configs/experiments.yaml              # toute la grille
+
+python -m src.evaluate --config configs/eval.yaml                                 # métriques et figures
+python demo/app.py --lora outputs/r16_s800/checkpoint-800 --share                 # démo interactive
+```
+Notebooks, à exécuter dans l'ordre : `00_donnees`, `01_baseline`, `02_entrainement_lora`, `03_evaluation`, `04_demo`.
+
+Nouvelle session Colab : `python -m src.data_utils fetch` re-télécharge les images listées dans `data/metadata.csv`. Les poids LoRA (3 à 60 Mo) ne sont pas versionnés dans Git : copiez `outputs/` sur Google Drive.
 
 ## Résultats principaux
-*À compléter après l'évaluation (notebook 03) : tableau `results/metrics_summary.csv`, figures `results/figures/`.*
 
-| Modèle | CLIP-T nouveau ↑ | Style (test) ↑ | Taux de copie ↓ | CLIP-T hors domaine ↑ | Temps | Pic VRAM |
+*À compléter après l'évaluation (notebook 03) avec `results/metrics_summary.csv`.*
+
+| Modèle | CLIP-T (prompts nouveaux) ↑ | Style (images de test) ↑ | Taux de copie ↓ | CLIP-T hors domaine ↑ | Temps d'entraînement | Pic VRAM |
 |---|---|---|---|---|---|---|
-| baseline | | | | | – | – |
-| LoRA r=4 @800 | | | | | | |
-| LoRA r=16 @800 | | | | | | |
-| LoRA r=64 @800 | | | | | | |
+| Baseline (sans LoRA) | | | | | – | – |
+| LoRA rang 4, 800 pas | | | | | | |
+| LoRA rang 16, 800 pas | | | | | | |
+| LoRA rang 64, 800 pas | | | | | | |
 
-![mesures](results/figures/metrics_vs_steps.png)
+![Métriques en fonction des étapes](results/figures/metrics_vs_steps.png)
 
-## Structure du dépôt
-| Dossier | Contenu |
-|---|---|
-| `notebooks/` | `00_donnees`, `01_baseline`, `02_entrainement_lora`, `03_evaluation`, `04_demo` |
-| `src/` | `data_utils.py` (données), `train_lora.py`, `run_experiments.py`, `generate.py`, `evaluate.py` |
-| `configs/` | `data.yaml`, `train_base.yaml`, `experiments.yaml`, `prompts.yaml`, `eval.yaml` |
-| `data/` | `metadata.csv` (licences, auteurs, légendes) ; images ignorées par Git ; `DATA_CARD` dans `docs/` |
-| `results/` | métriques CSV, figures, grilles d'exemples |
-| `demo/` | `app.py` (Gradio) + vidéo de démonstration |
-| `report/` | rapport final |
-| `docs/` | fiche des données, fiche du modèle, éthique, licences, plan de travail |
-| `tests/` | tests de la chaîne de données (`pytest -q`, sans GPU) |
-
-## Lancer sur Google Colab / Kaggle (GPU T4, activer Internet sur Kaggle)
-1. Poussez ce dépôt sur GitHub, puis dans chaque notebook remplacez `REPO_URL` par l'URL de votre dépôt.
-2. Ouvrez `notebooks/00_donnees.ipynb` dans Colab (*Fichier > Ouvrir > GitHub*) avec un GPU (*Exécution > Modifier le type d'exécution*), puis exécutez les notebooks dans l'ordre.
-
-Ou en ligne de commande (depuis la racine, GPU requis pour l'entraînement) :
-```bash
-pip install -r requirements.txt
-python -m src.data_utils download            # images Wikimedia Commons sous licence libre
-#  -> relire les légendes de data/metadata.csv (reviewed=1), commiter ce fichier
-python -m src.data_utils prepare && python -m src.data_utils check
-python -m src.train_lora --config configs/train_base.yaml --rank 16 --steps 800    # un run
-python -m src.run_experiments --experiments configs/experiments.yaml               # toute la grille
-python -m src.evaluate --config configs/eval.yaml                                  # métriques + figures
-python demo/app.py --lora outputs/r16_s800/checkpoint-800 --share                  # démo interactive
-```
-Nouvelle session Colab : `python -m src.data_utils fetch` re-télécharge les images listées dans `metadata.csv`
-(les photos personnelles vont dans `data/own/`, à commiter). Sauvegardez `outputs/` sur Google Drive (copie) ou en *release* GitHub : les LoRA pèsent 3 à 60 Mo.
-
-## Choix techniques (12 Go de VRAM)
-Poids gelés en fp16 · LoRA (rang r, `alpha = r`) sur `to_q, to_k, to_v, to_out` de l'UNet, entraînée en fp32 avec autocast fp16 ·
-latents et embeddings de texte mis en cache (VAE et encodeur de texte libérés) · gradient checkpointing · batch 2 · 512×512.
-Le pic de VRAM réel est mesuré et écrit dans `outputs/<run>/run_info.json`.
-
-## Évaluation
-Voir `src/evaluate.py` : respect du texte (CLIP-T), adoption du style sur images de test jamais vues, taux de copie des images d'entraînement
-(surapprentissage), oubli hors domaine, coût (temps, VRAM, paramètres) + grilles visuelles identiques en graines pour tous les modèles.
-
-## Licences et éthique
-Code : MIT. Modèle de base : CreativeML OpenRAIL-M. Images : voir `data/metadata.csv` (auteur, licence, URL de chaque image).
-Détails : [`docs/LICENSES.md`](docs/LICENSES.md), [`docs/ETHICS.md`](docs/ETHICS.md), [`docs/MODEL_CARD.md`](docs/MODEL_CARD.md).
+![Exemples avant/après](results/figures/grid_novel.png)
