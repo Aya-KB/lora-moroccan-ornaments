@@ -15,3 +15,5 @@ outputs/*
 *.bin
 results/generated/*
 !results/generated/.gitkeep
+
+results/review_sheet_*.png
