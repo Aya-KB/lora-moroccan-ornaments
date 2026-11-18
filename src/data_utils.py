@@ -139,13 +139,26 @@ def iter_commons_files(source: dict, pause: float = 1.0):
         time.sleep(pause)
 
 
-def _download_file(url: str, dest: Path) -> None:
+def _download_file(url: str, dest: Path, retries: int = 5) -> None:
+    """Télécharge avec reprise : Wikimedia répond 429 (trop de requêtes) si on va trop vite."""
     import requests
 
-    r = requests.get(url, headers=HEADERS, timeout=60)
-    r.raise_for_status()
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    dest.write_bytes(r.content)
+    last = None
+    for attempt in range(retries):
+        r = requests.get(url, headers=HEADERS, timeout=60)
+        if r.status_code == 429 or r.status_code >= 500:
+            try:
+                wait = float(r.headers.get("Retry-After", ""))
+            except ValueError:
+                wait = 5 * 2 ** attempt
+            last = f"HTTP {r.status_code}"
+            time.sleep(min(wait, 60))
+            continue
+        r.raise_for_status()
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(r.content)
+        return
+    raise RuntimeError(f"échec après {retries} essais ({last}) : {url}")
 
 
 def cmd_download(cfg: dict) -> None:
@@ -209,14 +222,20 @@ def cmd_download(cfg: dict) -> None:
 
 def cmd_fetch(cfg: dict) -> None:
     meta = load_meta()
-    n = 0
+    n, failed = 0, []
     for _, row in meta.iterrows():
         if find_raw(row["id"]) is None and row["file_url"]:
-            suffix = ".png" if row["file_url"].lower().endswith(".png") else ".jpg"
-            _download_file(row["file_url"], resolve(RAW_DIR) / f"{row['id']}{suffix}")
-            n += 1
+            suffix = ".png" if row["file_url"].lower().split("?")[0].endswith(".png") else ".jpg"
+            try:
+                _download_file(row["file_url"], resolve(RAW_DIR) / f"{row['id']}{suffix}")
+                n += 1
+            except Exception as e:
+                failed.append(row["id"])
+                print(f"  ! {row['id']} : {e}")
             time.sleep(cfg["request_pause_s"])
-    print(f"{n} images re-téléchargées.")
+    print(f"{n} images (re)téléchargées.")
+    if failed:
+        print(f"{len(failed)} échecs : {failed}. Relancez `fetch` (il ne reprend que les manquantes).")
 
 
 def cmd_add_own(cfg: dict, directory: str, author: str, license_: str) -> None:
@@ -260,10 +279,10 @@ def cmd_prepare(cfg: dict) -> None:
     meta = load_meta()
     size = int(cfg["image_size"])
     proc = resolve(PROC_DIR)
-    if proc.exists():
-        shutil.rmtree(proc)
-    (proc / "train").mkdir(parents=True)
-    (proc / "test").mkdir(parents=True)
+    for sub in ("train", "test"):          # on garde data/processed/.gitkeep
+        if (proc / sub).exists():
+            shutil.rmtree(proc / sub)
+        (proc / sub).mkdir(parents=True)
 
     accepted: list[tuple[str, np.ndarray]] = []
     tmp: dict[str, Image.Image] = {}
