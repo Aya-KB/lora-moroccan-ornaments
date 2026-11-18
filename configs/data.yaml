@@ -2,7 +2,7 @@
 caption_prefix: "a photo of moroccan zellige tilework, "   # préfixe commun de toutes les légendes
 image_size: 512          # taille finale (carré)
 min_side: 384            # on rejette les images dont le petit côté est inférieur
-n_test: 6                # images réservées à la généralisation (5 à 10 demandées)
+n_test: 5                # images réservées à la généralisation (5 à 10 demandées)
 seed: 42                 # reproductibilité du split train/test
 dedup_hamming: 6         # distance de Hamming (dHash 64 bits) <= seuil => doublon / quasi-doublon
 max_images: 45           # arrêt de la recherche quand ce nombre de lignes est atteint
